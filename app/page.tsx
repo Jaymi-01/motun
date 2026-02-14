@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import dynamic from "next/dynamic";
 import { 
   HiHeart, 
   HiMusicalNote, 
@@ -13,9 +12,6 @@ import {
   HiFire
 } from "react-icons/hi2";
 import { BsFillSuitHeartFill } from "react-icons/bs";
-
-// Dynamically import Lottie to avoid SSR issues
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 // --- Components ---
 
@@ -128,28 +124,15 @@ export default function ValentinePage() {
   const [noButtonPos, setNoButtonPos] = useState({ x: 0, y: 0 });
   const [noCount, setNoCount] = useState(0);
   const [noButtonScale, setNoButtonScale] = useState(1);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [animationData, setAnimationData] = useState<any>(null);
   
   const { scrollYProgress } = useScroll();
   const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
-  // Load Lottie animation and handle loading state
+  // Handle loading state
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000); // Minimum loading time for snazziness
-
-    fetch("https://assets10.lottiefiles.com/packages/lf20_S69rU9.json")
-      .then((res) => res.json())
-      .then((data) => {
-        setAnimationData(data);
-        // We don't necessarily clear loading here to ensure the timer finishes for UX
-      })
-      .catch((err) => {
-        console.error("Lottie load error:", err);
-        setIsLoading(false); // Clear loading even on error
-      });
 
     return () => clearTimeout(timer);
   }, []);
@@ -243,18 +226,21 @@ export default function ValentinePage() {
 
           {/* Chapter 1: The Intro */}
           <Section>
-            <motion.div
-              initial={{ scale: 0 }}
-              whileInView={{ scale: 1 }}
-              className="mb-8 flex h-32 w-32 items-center justify-center rounded-full bg-white shadow-inner sm:h-40 sm:w-40"
-            >
-              {animationData && (
-                <>
-                  <Lottie animationData={animationData} loop={true} className="w-24 sm:w-32" />
-                </>
-              )}
-            </motion.div>
-            
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        className="mb-8 flex h-32 w-32 items-center justify-center rounded-full bg-white shadow-inner sm:h-40 sm:w-40"
+                      >
+                        <motion.div
+                          animate={{ 
+                            scale: [1, 1.2, 1],
+                            filter: ["drop-shadow(0 0 0px #D23369)", "drop-shadow(0 0 10px #D23369)", "drop-shadow(0 0 0px #D23369)"]
+                          }}
+                          transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                        >
+                          <HiHeart className="text-deep-rose text-6xl sm:text-8xl" />
+                        </motion.div>
+                      </motion.div>            
             <h1 className="font-heading text-5xl sm:text-7xl md:text-8xl text-deep-rose mb-6 drop-shadow-md">
               Once upon a time...
             </h1>
